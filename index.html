@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support My Work | SM</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Support | SM</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="assets/tailwind_3.4.16.min.js"></script>
     <link rel="icon" href="assets/logo.ico" type="image/x-icon">
     <script>
         tailwind.config = {
@@ -187,6 +188,13 @@
     </div>
 </body>
 
+<style>
+/* Sprinkle animation styles */
+.sprinkle {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease; /* Bouncy effect and filter transition */
+    cursor: pointer;
+}
+</style>
 
 <script>
     // Simplified decorative sprinkles with parallax effect
@@ -215,8 +223,38 @@
     // Create and position sprinkles
     for (let i = 0; i < sprinkleCount; i++) {
         const sprinkle = document.createElement('div');
+        sprinkle.classList.add('sprinkle');
         const shape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
         let size = Math.random() * 10 + 18; // 18-28px, slightly smaller
+        // Remove pointer-events: none from container to allow interaction
+        sprinklesContainer.style.pointerEvents = 'auto';
+        
+        // Add mouseenter event for rotation animation
+        sprinkle.addEventListener('mouseenter', function() {
+            // Don't add another animation if one is in progress
+            if (sprinkle.dataset.animating === 'true') return;
+            sprinkle.dataset.animating = 'true';
+            // Set hover state to remove blur
+            sprinkle.dataset.hover = 'true';
+            // Get current transform to maintain position
+            const currentTransform = sprinkle.style.transform || '';
+            // Random rotation direction and amount
+            const rotationAmount = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 180 + 180);
+            // Apply rotation
+            sprinkle.style.transform = `${currentTransform} rotate(${rotationAmount}deg)`;
+            
+            // Reset after animation completes
+            setTimeout(() => {
+                // Reset to original transform without the rotation
+                sprinkle.style.transform = currentTransform;
+                sprinkle.dataset.animating = 'false';
+            }, 400);
+        });
+
+        // Add mouseleave event to restore blur
+        sprinkle.addEventListener('mouseleave', function() {
+            sprinkle.dataset.hover = 'false';
+        });
 
         if (shape.name === 'triangle') {
             sprinkle.style.width = '0';
@@ -296,11 +334,16 @@
         sprinkles.forEach(({ el, x, y, size }) => {
             // Compute movement factor with a minimum offset so particles always move
             const moveFactor = 0.3 + ((size - 18) / 10) * 0.7;
-            const moveX = currentMouseX * 15 * moveFactor;
-            const moveY = currentMouseY * 15 * moveFactor;
-            // Append any initial transform (e.g. diamond rotation) if present.
-            const extraTransform = el.dataset.initialTransform ? ' ' + el.dataset.initialTransform : '';
-            el.style.transform = `translate(${moveX}px, ${moveY}px)` + extraTransform;
+            const moveX = currentMouseX * 18 * moveFactor;
+            const moveY = currentMouseY * 18 * moveFactor;
+            
+            // Don't override rotation animation if in progress
+            if (el.dataset.animating !== 'true') {
+                // Append any initial transform (e.g. diamond rotation) if present
+                const extraTransform = el.dataset.initialTransform ? ' ' + el.dataset.initialTransform : '';
+                el.style.transform = `translate(${moveX}px, ${moveY}px)${extraTransform}`;
+            }
+            
             // Set z-index from 0 (smallest) to 30 (largest) based on original size factor
             const z = Math.floor(((size - 18) / 10) * 30);
             el.style.zIndex = z;
@@ -308,7 +351,8 @@
             el.style.top = `calc(50% + ${y}px)`;
             // Less blur: max 2px for farthest, 0px for closest
             // z=0 (farthest): blur=2px, z=30 (closest): blur=0px
-            const blur = 2 - (z / 30) * 2;
+            // If hovering, set blur to 0
+            const blur = el.dataset.hover === 'true' ? 0 : 2 - (z / 30) * 2;
             el.style.filter = `blur(${blur}px)`;
         });
 
@@ -350,8 +394,8 @@
     const DOT_COUNT = 32;
     const DOT_MIN_RADIUS = 2;
     const DOT_MAX_RADIUS = 5;
-    const DOT_MIN_SPEED = 0.15;
-    const DOT_MAX_SPEED = 0.35;
+    const DOT_MIN_SPEED = 0.2;
+    const DOT_MAX_SPEED = 0.4;
     const DOT_COLOR_LIGHT = 'rgba(60,80,180,0.10)';
     const DOT_COLOR_DARK = 'rgba(220,230,255,0.08)';
     let dots = [];
@@ -360,12 +404,18 @@
     let lastMouseX = width/2, lastMouseY = height/2;
     let mouseVX = 0, mouseVY = 1; // Default: falling down
     let lastMoveTime = Date.now();
+    const MAX_MOUSE_VX = 1.5; // Limit horizontal speed
 
     document.addEventListener('mousemove', (e) => {
         const now = Date.now();
         const dt = Math.max(now - lastMoveTime, 1);
-        mouseVX = (e.clientX - lastMouseX) / dt;
-        mouseVY = (e.clientY - lastMouseY) / dt;
+        let vx = (e.clientX - lastMouseX) / dt;
+        let vy = (e.clientY - lastMouseY) / dt;
+        // Clamp horizontal speed
+        if (vx > MAX_MOUSE_VX) vx = MAX_MOUSE_VX;
+        if (vx < -MAX_MOUSE_VX) vx = -MAX_MOUSE_VX;
+        mouseVX = vx;
+        mouseVY = vy;
         lastMouseX = e.clientX;
         lastMouseY = e.clientY;
         lastMoveTime = now;
@@ -384,7 +434,7 @@
             y,
             r,
             speed: Math.random() * (DOT_MAX_SPEED - DOT_MIN_SPEED) + DOT_MIN_SPEED,
-            drift: (Math.random() - 0.5) * 0.2,
+            drift: (Math.random() - 0.5) * 0.3,
         };
     }
 
