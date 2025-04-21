@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support My Work | SM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'royalblue',
+                    }
+                }
+            },
+            darkMode: 'class'
+        }
+
+        // Theme preference logic
+        function setTheme(mode) {
+            if (mode === 'dark') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        // On load: check localStorage, else system
+        (function() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark' || saved === 'light') {
+                setTheme(saved);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setTheme('dark');
+            }
+        })();
+        // Listen for system changes only if not overridden
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('theme')) {
+                setTheme(event.matches ? 'dark' : 'light');
+            }
+        });
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen flex flex-col items-center">
+    <!-- Animated background dots canvas -->
+    <canvas id="bg-dots-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;"></canvas>
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" aria-label="Toggle dark mode"
+        class="fixed top-3 right-3 z-[60] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full shadow-md p-2 transition hover:scale-110 focus:outline-none"
+        style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+        <!-- Sun Icon -->
+        <svg id="icon-sun" class="w-6 h-6 text-yellow-400 dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" fill="currentColor"/>
+            <g stroke="currentColor">
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </g>
+        </svg>
+        <!-- Moon Icon -->
+        <svg id="icon-moon" class="w-6 h-6 text-gray-700 dark:text-gray-200 hidden dark:inline" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke="currentColor" fill="currentColor"
+                d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
+        </svg>
+    </button>
+
+    <div class="container max-w-md mx-auto px-4 py-8 z-[50] relative">
+        <!-- Logo Image Container -->
+        <div class="flex justify-center mb-8">
+            <div class="relative">
+                <!-- Decorative sprinkles (parallax) -->
+                <div id="sprinkles-container" class="absolute inset-0 w-96 h-96 -translate-x-32 -translate-y-32 pointer-events-none z-10"></div>
+                <!-- Main circular container with decorative border -->
+                <div class="w-32 h-32 rounded-full bg-primary p-1 shadow-lg flex items-center justify-center relative z-10">
+                    <!-- Inner white/dark circle for the image -->
+                    <div class="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden border-4 border-white dark:border-gray-800">
+                        <!-- Replace with your actual logo image -->
+                        <img src="assets/logo.jpg" alt="Main Logo" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-3">Support My Work</h1>
+            <p class="text-gray-600 dark:text-gray-400">Your contribution helps me continue creating content you love.</p>
+        </header>
+
+        <main class="w-full">
+            <div class="space-y-5 z-[51] relative">
+                <!-- PayPal Button -->
+                <a href="https://www.paypal.com/paypalme/SamuelMediani" target="_blank" class="donation-btn bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 flex items-center transition-all hover:shadow-md hover:border-primary dark:hover:border-primary hover:translate-y-[-2px]">
+                    <div class="rounded-full bg-[#C2DCEEFF] p-3 mr-4 flex-shrink-0">
+                        <img src="assets/paypal-logo.svg" alt="PayPal Logo" class="w-8 h-8">
+                    </div>
+                    <div>
+                        <h2 class="font-semibold text-lg">PayPal</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Support via PayPal</p>
+                    </div>
+                    <svg class="ml-auto flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+
+                <!-- Buy Me a Coffee Button -->
+                <a href="https://buymeacoffee.com/sammed" target="_blank" class="donation-btn bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 flex items-center transition-all hover:shadow-md hover:border-primary dark:hover:border-primary hover:translate-y-[-2px]">
+                    <div class="rounded-full bg-[#FCF1AAFF] p-3 mr-4 flex-shrink-0">
+                        <img src="assets/bmc-logo.svg" alt="Buy Me a Coffee Logo" class="w-8 h-8">
+                    </div>
+                    <div>
+                        <h2 class="font-semibold text-lg">Buy Me a Coffee</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Support through Buy Me a Coffee</p>
+                    </div>
+                    <svg class="ml-auto flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+
+                <!-- Ko-fi Button -->
+                <a href="https://ko-fi.com/sammed" target="_blank" class="donation-btn bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 flex items-center transition-all hover:shadow-md hover:border-primary dark:hover:border-primary hover:translate-y-[-2px]">
+                    <div class="rounded-full bg-[#29ABE0] p-3 mr-4 flex-shrink-0">
+                        <img src="assets/kofi-logo.svg" alt="Ko-fi Logo" class="w-8 h-8">
+                    </div>
+                    <div>
+                        <h2 class="font-semibold text-lg">Ko-fi</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Support through Ko-fi</p>
+                    </div>
+                    <svg class="ml-auto flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+
+            <hr class="my-[15px] border-gray-300 dark:border-gray-700">
+
+            <!-- Main Website Button -->
+            <a href="https://samdev.netlify.app/" target="_blank" class="donation-btn bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 flex items-center transition-all hover:shadow-md hover:border-primary dark:hover:border-primary hover:translate-y-[-2px] z-[51] relative">
+                <div class="w-14 h-14 rounded-full bg-[#83A1AD34] flex items-center justify-center mr-4 flex-shrink-0">
+                    <span class="text-lg font-bold text-gray-800 dark:text-gray-200">🌐</span>
+                </div>
+                <div>
+                    <h2 class="font-semibold text-lg">Visit my website</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Explore the things I do on my main website</p>
+                </div>
+                <svg class="ml-auto flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+            </a>
+
+            <!-- Social Icons Row -->
+            <div class="flex justify-center gap-6 mt-10">
+                <!-- GitHub -->
+                <a href="https://github.com/SamMed05" target="_blank" aria-label="GitHub" class="transition hover:scale-110">
+                    <svg class="w-7 h-7 text-gray-700 dark:text-gray-200" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1.7 2.1 2.7 1.5.1-.7.4-1.2.7-1.5-2.7-.3-5.5-1.3-5.5-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.3 11.3 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.9 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.5 5.8.4.3.7.9.7 1.9v2.8c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/>
+                    </svg>
+                </a>
+                <!-- YouTube -->
+                <a href="https://www.youtube.com/@samuelmediani" target="_blank" aria-label="YouTube" class="transition hover:scale-110">
+                    <svg class="w-7 h-7 text-red-600 dark:text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.5 6.2a2.9 2.9 0 0 0-2-2C19.2 3.7 12 3.7 12 3.7s-7.2 0-9.5.5a2.9 2.9 0 0 0-2 2A30.2 30.2 0 0 0 0 12a30.2 30.2 0 0 0 .5 5.8 2.9 2.9 0 0 0 2 2c2.3.5 9.5.5 9.5.5s7.2 0 9.5-.5a2.9 2.9 0 0 0 2-2A30.2 30.2 0 0 0 24 12a30.2 30.2 0 0 0-.5-5.8zM9.6 16V8l6.4 4-6.4 4z"/>
+                    </svg>
+                </a>
+                <!-- Bluesky -->
+                <a href="https://bsky.app/profile/sam-med.bsky.social" target="_blank" aria-label="Bluesky" class="transition hover:scale-110">
+                    <svg class="w-7 h-7 text-sky-500 dark:text-sky-400" viewBox="0 0 32 32" fill="currentColor">
+                        <g transform="scale(0.05) translate(10,10)">
+                            <path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0174-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z" fill="#1185fe"/>
+                        </g>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                <p>Thank you for your support!</p>
+            </div>
+        </main>
+    </div>
+</body>
+
+
+<script>
+    // Simplified decorative sprinkles with parallax effect
+    const sprinklesContainer = document.getElementById('sprinkles-container');
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    const sprinkleCount = 6; // fewer sprinkles
+    const sprinkles = [];
+    
+    // Simplified color palette
+    const sprinkleColors = [
+        'rgba(65, 105, 225, 0.8)', // primary blue
+        'rgba(130, 160, 255, 0.7)', // light blue
+        'rgba(70, 80, 170, 0.7)',   // dark blue
+        isDarkMode ? 'rgba(220, 220, 255, 0.7)' : 'rgba(40, 50, 120, 0.7)'
+    ];
+    
+    // Simplified shape options, added triangle and plus, removed line
+    const shapeTypes = [
+        {name: 'circle', borderRadius: '50%'},
+        {name: 'square', borderRadius: '4px'},
+        {name: 'diamond', transform: 'rotate(45deg)'},
+        {name: 'triangle'},
+        {name: 'plus'}
+    ];
+    
+    // Create and position sprinkles
+    for (let i = 0; i < sprinkleCount; i++) {
+        const sprinkle = document.createElement('div');
+        const shape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+        let size = Math.random() * 10 + 18; // 18-28px, slightly smaller
+
+        if (shape.name === 'triangle') {
+            sprinkle.style.width = '0';
+            sprinkle.style.height = '0';
+            sprinkle.style.borderLeft = `${size/2}px solid transparent`;
+            sprinkle.style.borderRight = `${size/2}px solid transparent`;
+            sprinkle.style.borderBottom = `${size}px solid ${sprinkleColors[Math.floor(Math.random() * sprinkleColors.length)]}`;
+            sprinkle.style.background = 'transparent';
+        } else if (shape.name === 'plus') {
+            sprinkle.style.position = 'relative';
+            sprinkle.style.width = `${size}px`;
+            sprinkle.style.height = `${size}px`;
+            sprinkle.style.background = 'transparent';
+            const v = document.createElement('div');
+            v.style.position = 'absolute';
+            v.style.left = '45%';
+            v.style.top = '0';
+            v.style.width = `${size * 0.15}px`;
+            v.style.height = `${size}px`;
+            v.style.background = sprinkleColors[Math.floor(Math.random() * sprinkleColors.length)];
+            const h = document.createElement('div');
+            h.style.position = 'absolute';
+            h.style.top = '45%';
+            h.style.left = '0';
+            h.style.width = `${size}px`;
+            h.style.height = `${size * 0.15}px`;
+            h.style.background = v.style.background;
+            sprinkle.appendChild(v);
+            sprinkle.appendChild(h);
+        } else {
+            sprinkle.style.width = `${size}px`;
+            sprinkle.style.height = `${size}px`;
+            if (shape.borderRadius) sprinkle.style.borderRadius = shape.borderRadius;
+            // Instead of setting transform directly, store for diamond so it isn't overwritten later.
+            if (shape.transform && shape.name === 'diamond') {
+                sprinkle.dataset.initialTransform = shape.transform;
+            }
+            sprinkle.style.backgroundColor = sprinkleColors[Math.floor(Math.random() * sprinkleColors.length)];
+        }
+
+        // Position close to the logo border (logo radius ~64px, border ~8px)
+        const angle = (i / sprinkleCount) * Math.PI * 2 + Math.random() * 0.3 - 0.1; // even spacing, slight jitter
+        const distance = 65 + Math.random() * 25; // just outside logo
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+
+        sprinkle.style.position = 'absolute';
+        sprinkle.style.left = `calc(50% + ${x}px)`;
+        sprinkle.style.top = `calc(50% + ${y}px)`;
+
+        sprinklesContainer.appendChild(sprinkle);
+
+        sprinkles.push({
+            el: sprinkle,
+            x,
+            y,
+            size
+        });
+    }
+
+    // Store target and current parallax values for smooth interpolation
+    let targetMouseX = 0, targetMouseY = 0;
+    let currentMouseX = 0, currentMouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        targetMouseX = (e.clientX - centerX) / centerX;
+        targetMouseY = (e.clientY - centerY) / centerY;
+    });
+
+    function animateSprinkles() {
+        // Interpolate towards target mouse position for smoothness
+        currentMouseX += (targetMouseX - currentMouseX) * 0.12;
+        currentMouseY += (targetMouseY - currentMouseY) * 0.12;
+
+        sprinkles.forEach(({ el, x, y, size }) => {
+            // Compute movement factor with a minimum offset so particles always move
+            const moveFactor = 0.3 + ((size - 18) / 10) * 0.7;
+            const moveX = currentMouseX * 15 * moveFactor;
+            const moveY = currentMouseY * 15 * moveFactor;
+            // Append any initial transform (e.g. diamond rotation) if present.
+            const extraTransform = el.dataset.initialTransform ? ' ' + el.dataset.initialTransform : '';
+            el.style.transform = `translate(${moveX}px, ${moveY}px)` + extraTransform;
+            // Set z-index from 0 (smallest) to 30 (largest) based on original size factor
+            const z = Math.floor(((size - 18) / 10) * 30);
+            el.style.zIndex = z;
+            el.style.left = `calc(50% + ${x}px)`;
+            el.style.top = `calc(50% + ${y}px)`;
+            // Less blur: max 2px for farthest, 0px for closest
+            // z=0 (farthest): blur=2px, z=30 (closest): blur=0px
+            const blur = 2 - (z / 30) * 2;
+            el.style.filter = `blur(${blur}px)`;
+        });
+
+        requestAnimationFrame(animateSprinkles);
+    }
+
+    animateSprinkles();
+
+    // Theme toggle logic
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        setTheme(isDark ? 'light' : 'dark');
+        // Update icons (Tailwind's dark: classes handle most, but force update for inline SVGs)
+        document.getElementById('icon-sun').classList.toggle('hidden', !isDark);
+        document.getElementById('icon-moon').classList.toggle('hidden', isDark);
+    });
+    // On load, set correct icon
+    (function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        document.getElementById('icon-sun').classList.toggle('hidden', isDark);
+        document.getElementById('icon-moon').classList.toggle('hidden', !isDark);
+    })();
+
+    // Animated faint dots background
+    const bgDotsCanvas = document.getElementById('bg-dots-canvas');
+    const ctx = bgDotsCanvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        bgDotsCanvas.width = width;
+        bgDotsCanvas.height = height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Dot properties
+    const DOT_COUNT = 32;
+    const DOT_MIN_RADIUS = 2;
+    const DOT_MAX_RADIUS = 5;
+    const DOT_MIN_SPEED = 0.15;
+    const DOT_MAX_SPEED = 0.35;
+    const DOT_COLOR_LIGHT = 'rgba(60,80,180,0.10)';
+    const DOT_COLOR_DARK = 'rgba(220,230,255,0.08)';
+    let dots = [];
+
+    // Mouse direction tracking
+    let lastMouseX = width/2, lastMouseY = height/2;
+    let mouseVX = 0, mouseVY = 1; // Default: falling down
+    let lastMoveTime = Date.now();
+
+    document.addEventListener('mousemove', (e) => {
+        const now = Date.now();
+        const dt = Math.max(now - lastMoveTime, 1);
+        mouseVX = (e.clientX - lastMouseX) / dt;
+        mouseVY = (e.clientY - lastMouseY) / dt;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+        lastMoveTime = now;
+    });
+
+    function randomDot(existingDot) {
+        // If existingDot is provided, keep its relative y position (as a ratio)
+        const r = Math.random() * (DOT_MAX_RADIUS - DOT_MIN_RADIUS) + DOT_MIN_RADIUS;
+        let y = Math.random() * -height;
+        if (existingDot && typeof existingDot.y === 'number') {
+            // Keep the same y ratio after resize
+            y = existingDot.y / height * window.innerHeight;
+        }
+        return {
+            x: Math.random() * width,
+            y,
+            r,
+            speed: Math.random() * (DOT_MAX_SPEED - DOT_MIN_SPEED) + DOT_MIN_SPEED,
+            drift: (Math.random() - 0.5) * 0.2,
+        };
+    }
+
+    function initDots() {
+        if (dots.length === 0) {
+            for (let i = 0; i < DOT_COUNT; i++) {
+                dots.push(randomDot());
+            }
+        } else {
+            // On resize, keep y-ratio and randomize x
+            for (let i = 0; i < dots.length; i++) {
+                dots[i] = randomDot(dots[i]);
+            }
+        }
+    }
+    initDots();
+
+    function animateDots() {
+        ctx.clearRect(0, 0, width, height);
+        // Choose color based on theme
+        const isDark = document.documentElement.classList.contains('dark');
+        ctx.fillStyle = isDark ? DOT_COLOR_DARK : DOT_COLOR_LIGHT;
+
+        for (let dot of dots) {
+            // Move dot
+            dot.y += dot.speed * 1.5;
+            // Drift in last mouse direction (normalized, slow)
+            dot.x += (mouseVX * 0.8 + dot.drift) * dot.speed * 2;
+            // Respawn if out of bounds
+            if (dot.y - dot.r > height || dot.x < -20 || dot.x > width + 20) {
+                Object.assign(dot, randomDot());
+                dot.y = -dot.r;
+            }
+            // Progressive size: smaller at the bottom
+            // y from 0 (top) to height (bottom): scale from DOT_MAX_RADIUS to DOT_MIN_RADIUS
+            const yRatio = Math.min(Math.max(dot.y / height, 0), 1);
+            const radius = dot.r * (1 - yRatio) + DOT_MIN_RADIUS * yRatio;
+            ctx.beginPath();
+            ctx.arc(dot.x, dot.y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        requestAnimationFrame(animateDots);
+    }
+    animateDots();
+
+    // Re-init dots on resize for color/size consistency, but keep their y-ratio
+    window.addEventListener('resize', () => {
+        resizeCanvas();
+        initDots();
+    });
+    // Listen for theme change to update dot color
+    const observer = new MutationObserver(() => {
+        ctx.clearRect(0, 0, width, height);
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+</script>
+</html>
