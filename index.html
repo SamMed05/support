@@ -79,7 +79,7 @@
         <div class="flex justify-center mb-8">
             <div class="relative">
                 <!-- Decorative sprinkles (parallax) -->
-                <div id="sprinkles-container" class="absolute inset-0 w-96 h-96 -translate-x-32 -translate-y-32 pointer-events-none z-10"></div>
+                <div id="sprinkles-container" class="absolute inset-0 w-full h-full pointer-events-none z-10" style="width: 240px; height: 240px; transform: translate(-25%, -25%);"></div>
                 <!-- Main circular container with decorative border -->
                 <div class="w-32 h-32 rounded-full bg-primary p-1 shadow-lg flex items-center justify-center relative z-10">
                     <!-- Inner white/dark circle for the image -->
@@ -225,7 +225,7 @@
         const sprinkle = document.createElement('div');
         sprinkle.classList.add('sprinkle');
         const shape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
-        let size = Math.random() * 10 + 18; // 18-28px, slightly smaller
+        let size = Math.random() * 10 + 15; // Slightly smaller (15-25px instead of 18-28px)
         // Remove pointer-events: none from container to allow interaction
         sprinklesContainer.style.pointerEvents = 'auto';
         
@@ -295,9 +295,10 @@
             sprinkle.style.backgroundColor = sprinkleColors[Math.floor(Math.random() * sprinkleColors.length)];
         }
 
-        // Position close to the logo border (logo radius ~64px, border ~8px)
+        // Position close to the logo border with responsive distances
         const angle = (i / sprinkleCount) * Math.PI * 2 + Math.random() * 0.3 - 0.1; // even spacing, slight jitter
-        const distance = 65 + Math.random() * 25; // just outside logo
+        const containerSize = Math.min(240, window.innerWidth * 0.6); // Cap container size
+        const distance = (containerSize / 4) + Math.random() * (containerSize / 8); // Responsive distance
         const x = Math.cos(angle) * distance;
         const y = Math.sin(angle) * distance;
 
@@ -311,7 +312,9 @@
             el: sprinkle,
             x,
             y,
-            size
+            size,
+            angle,
+            distance
         });
     }
 
@@ -320,20 +323,34 @@
     let currentMouseX = 0, currentMouseY = 0;
 
     document.addEventListener('mousemove', (e) => {
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        targetMouseX = (e.clientX - centerX) / centerX;
-        targetMouseY = (e.clientY - centerY) / centerY;
+        // Calculate viewport center instead of window center
+        // This accounts for scroll position to get the true center of the visible area
+        const viewportCenterX = window.innerWidth / 2;
+        const viewportCenterY = window.innerHeight / 2;
+        
+        // Calculate mouse position relative to viewport center
+        targetMouseX = (e.clientX - viewportCenterX) / viewportCenterX;
+        targetMouseY = (e.clientY - viewportCenterY) / viewportCenterY;
     });
+
+    // Initialize for touch devices by centering the effect
+    if ('ontouchstart' in window) {
+        targetMouseX = 0;
+        targetMouseY = 0;
+    }
 
     function animateSprinkles() {
         // Interpolate towards target mouse position for smoothness
         currentMouseX += (targetMouseX - currentMouseX) * 0.12;
         currentMouseY += (targetMouseY - currentMouseY) * 0.12;
 
-        sprinkles.forEach(({ el, x, y, size }) => {
+        // Get the current container size
+        const containerRect = sprinklesContainer.getBoundingClientRect();
+        const containerSize = Math.min(containerRect.width, containerRect.height);
+
+        sprinkles.forEach(({ el, x, y, size, angle, distance }) => {
             // Compute movement factor with a minimum offset so particles always move
-            const moveFactor = 0.3 + ((size - 18) / 10) * 0.7;
+            const moveFactor = 0.3 + ((size - 15) / 10) * 0.7;
             const moveX = currentMouseX * 18 * moveFactor;
             const moveY = currentMouseY * 18 * moveFactor;
             
@@ -345,10 +362,17 @@
             }
             
             // Set z-index from 0 (smallest) to 30 (largest) based on original size factor
-            const z = Math.floor(((size - 18) / 10) * 30);
+            const z = Math.floor(((size - 15) / 10) * 30);
             el.style.zIndex = z;
-            el.style.left = `calc(50% + ${x}px)`;
-            el.style.top = `calc(50% + ${y}px)`;
+            
+            // Recalculate position if window is resized
+            const newDistance = (containerSize / 4) + (distance % (containerSize / 8));
+            const newX = Math.cos(angle) * newDistance;
+            const newY = Math.sin(angle) * newDistance;
+            
+            el.style.left = `calc(50% + ${newX}px)`;
+            el.style.top = `calc(50% + ${newY}px)`;
+            
             // Less blur: max 2px for farthest, 0px for closest
             // z=0 (farthest): blur=2px, z=30 (closest): blur=0px
             // If hovering, set blur to 0
@@ -490,5 +514,18 @@
         ctx.clearRect(0, 0, width, height);
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    // Update sprinkles container size on window resize
+    window.addEventListener('resize', () => {
+        // Ensure sprinkles container doesn't exceed viewport
+        const containerSize = Math.min(240, window.innerWidth * 0.6);
+        sprinklesContainer.style.width = `${containerSize}px`;
+        sprinklesContainer.style.height = `${containerSize}px`;
+    });
+    
+    // Initial size setting
+    const initialContainerSize = Math.min(240, window.innerWidth * 0.6);
+    sprinklesContainer.style.width = `${initialContainerSize}px`;
+    sprinklesContainer.style.height = `${initialContainerSize}px`;
 </script>
 </html>
